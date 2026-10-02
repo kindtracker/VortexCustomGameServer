@@ -27,16 +27,19 @@ int main(void) {
   fclose(FilePtr);
 
   DecodedFile File = DecodeVrtxFile(Data, DataLength);
-  EncodedFile Output = EncodeVrtxFile(&File.Document);
+  for (size_t Index = 0; Index < File.Document.RecordCount; Index++) {
+    Record *RecordValue = &File.Document.Records[Index];
 
-  FILE *OutputFile = fopen("output.vrtx", "wb");
-  if (!OutputFile)
-    return -1;
+    if (RecordValue->ClassId != ClassPart)
+      continue;
 
-  fwrite(Output.Data, 1, Output.Length, OutputFile);
-  fclose(OutputFile);
+    PartBody *Part = &RecordValue->Body.Part;
 
-  FreeEncodedFile(&Output);
+    printf("Part: %s\n", RecordValue->Name);
+    printf("Position: %f, %f, %f\n", Part->Position.Values[0],
+           Part->Position.Values[1], Part->Position.Values[2]);
+  }
+
   FreeDecodedFile(&File);
   free(Data);
 

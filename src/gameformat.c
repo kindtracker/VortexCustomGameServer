@@ -105,6 +105,29 @@ void BufferWriteU8(ByteBuffer *Buffer, uint8_t Value) {
   BufferWrite(Buffer, &Value, 1);
 }
 
+void BufferAppend(ByteBuffer *Buffer, const uint8_t *Data, size_t Length) {
+  if (Length == 0)
+    return;
+
+  if (Buffer->Length + Length > Buffer->Capacity) {
+    size_t NewCapacity = Buffer->Capacity == 0 ? 4096 : Buffer->Capacity;
+
+    while (NewCapacity < Buffer->Length + Length)
+      NewCapacity *= 2;
+
+    uint8_t *NewData = realloc(Buffer->Data, NewCapacity);
+
+    if (NewData == NULL)
+      Fail("[Vcgs] unable to allocate buffer");
+
+    Buffer->Data = NewData;
+    Buffer->Capacity = NewCapacity;
+  }
+
+  memcpy(Buffer->Data + Buffer->Length, Data, Length);
+  Buffer->Length += Length;
+}
+
 void BufferFree(ByteBuffer *Buffer) {
   free(Buffer->Data);
   Buffer->Data = NULL;
@@ -903,30 +926,44 @@ DecodedFile DecodeVrtxFile(const uint8_t *Data, size_t Length) {
 
   size_t CompressedLength = Length - 5;
 
-  unsigned long long FrameSize =
-      ZSTD_getFrameContentSize(Data + 5, CompressedLength);
+  ZSTD_DStream *Stream = ZSTD_createDStream();
 
-  if (FrameSize == ZSTD_CONTENTSIZE_ERROR ||
-      FrameSize == ZSTD_CONTENTSIZE_UNKNOWN)
-    Fail("[Vcgs] unable to determine zstd frame size");
+  if (Stream == NULL)
+    Fail("[Vcgs] unable to create zstd stream");
 
-  uint8_t *Payload = Allocate((size_t)FrameSize);
+  size_t InitResult = ZSTD_initDStream(Stream);
 
-  size_t ResultSize =
-      ZSTD_decompress(Payload, (size_t)FrameSize, Data + 5, CompressedLength);
+  if (ZSTD_isError(InitResult))
+    Fail(ZSTD_getErrorName(InitResult));
 
-  if (ZSTD_isError(ResultSize)) {
-    free(Payload);
-    Fail(ZSTD_getErrorName(ResultSize));
+  ZSTD_inBuffer Input = {.src = Data + 5, .size = CompressedLength, .pos = 0};
+
+  ByteBuffer Payload = {0};
+
+  while (Input.pos < Input.size) {
+    uint8_t Buffer[65536];
+
+    ZSTD_outBuffer Output = {.dst = Buffer, .size = sizeof(Buffer), .pos = 0};
+
+    size_t ResultSize = ZSTD_decompressStream(Stream, &Output, &Input);
+
+    if (ZSTD_isError(ResultSize)) {
+      ZSTD_freeDStream(Stream);
+      BufferFree(&Payload);
+      Fail(ZSTD_getErrorName(ResultSize));
+    }
+
+    BufferAppend(&Payload, Buffer, Output.pos);
+
+    if (ResultSize == 0 && Input.pos == Input.size)
+      break;
   }
 
-  Result.Document = DecodePayload(Payload, ResultSize);
+  ZSTD_freeDStream(Stream);
 
-  free(Payload);
+  Result.Document = DecodePayload(Payload.Data, Payload.Length);
 
-  Result.Compression.Kind = CompressionNvtZstd;
-
-  Result.Compression.WrapperVersion = Data[4];
+  BufferFree(&Payload);
 
   return Result;
 }

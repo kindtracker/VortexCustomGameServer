@@ -213,6 +213,7 @@ void FreeBytes(Bytes *Value);
 void BufferReserve(ByteBuffer *Buffer, size_t Additional);
 void BufferWrite(ByteBuffer *Buffer, const void *Data, size_t Length);
 void BufferWriteU8(ByteBuffer *Buffer, uint8_t Value);
+void BufferAppend(ByteBuffer *Buffer, const uint8_t *Data, size_t Length);
 void BufferFree(ByteBuffer *Buffer);
 uint32_t ReadU32Le(const uint8_t *Data);
 int32_t ReadI32Le(const uint8_t *Data);
