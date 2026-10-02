@@ -202,6 +202,8 @@ EncodedFile EncodeVrtxFile(const Document *DocumentValue);
 void FreeDecodedFile(DecodedFile *Value);
 void FreeEncodedFile(EncodedFile *Value);
 
+int ServerStart(void);
+
 void Fail(const char *Message);
 void *Allocate(size_t Size);
 void *Reallocate(void *Pointer, size_t Size);

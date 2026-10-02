@@ -40,6 +40,8 @@ int main(void) {
            Part->Position.Values[1], Part->Position.Values[2]);
   }
 
+  ServerStart();
+
   FreeDecodedFile(&File);
   free(Data);
 
