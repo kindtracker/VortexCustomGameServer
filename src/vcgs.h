@@ -202,6 +202,8 @@ EncodedFile EncodeVrtxFile(const Document *DocumentValue);
 void FreeDecodedFile(DecodedFile *Value);
 void FreeEncodedFile(EncodedFile *Value);
 
+int WriteGameJson(const Document *DocumentValue, const char *Path);
+
 int ServerStart(void);
 
 void Fail(const char *Message);

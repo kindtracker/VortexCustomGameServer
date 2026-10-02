@@ -1,0 +1,14 @@
+{
+  "Version": 1,
+  "ProjectId":"55c3353d4821adc14511f0c5373b91c0",
+  "Lighting":{"AmbientColor":[0.99999994,0.99999994,0.99999994,1],"Brightness":2000,"SunColor":[0.99999994,0.99999994,0.99999994,1],"SunIlluminance":8000,"SunShadowMapsEnabled":true,"SunDirection":[-0.394472718,0.439167857,0.223346666,0.775654018]},
+  "Records": [
+    {"ClassId":0,"Class":"Workspace","Name":"Workspace","Body":{"ParentId":null,"HasCollapsed":true,"Collapsed":false}},
+    {"ClassId":1,"Class":"Lighting","Name":"Lighting","Body":{"ParentId":null,"HasCollapsed":true,"Collapsed":false}},
+    {"ClassId":10,"Class":"ReplicatedStorage","Name":"ReplicatedStorage","Body":{"ParentId":null,"HasCollapsed":true,"Collapsed":false}},
+    {"ClassId":12,"Class":"ServerScriptService","Name":"ServerScriptService","Body":{"ParentId":null,"HasCollapsed":true,"Collapsed":false}},
+    {"ClassId":11,"Class":"StarterPlayerScripts","Name":"StarterPlayerScripts","Body":{"ParentId":null,"HasCollapsed":true,"Collapsed":false}},
+    {"ClassId":2,"Class":"Part","Name":"Baseplate","Body":{"ParentId":0,"DisplayName":"Baseplate","Position":[0,-2,0],"Rotation":[0,0,0,1],"Size":[255,4,255],"Color":[0.392156869,0.392156869,0.392156869,1],"Material":"Smooth","CastShadow":true,"Anchored":true,"CanCollide":true,"SpawnLocation":false,"Locked":true,"CustomAppearance":false,"Truss":false,"Textures":[{"Face":2,"Kind":0},{"Face":3,"Kind":1}],"PointLight":null,"SpotLight":null,"Collapsed":false}},
+    {"ClassId":2,"Class":"Part","Name":"SpawnLocation","Body":{"ParentId":0,"DisplayName":"SpawnLocation","Position":[0,0.5,0],"Rotation":[0,0,0,1],"Size":[6,1,6],"Color":[0.294117659,0.592156887,0.294117659,1],"Material":"Smooth","CastShadow":true,"Anchored":true,"CanCollide":true,"SpawnLocation":true,"Locked":false,"CustomAppearance":false,"Truss":false,"Textures":[],"PointLight":null,"SpotLight":null,"Collapsed":false}}
+  ]
+}

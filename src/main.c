@@ -40,6 +40,11 @@ int main(void) {
            Part->Position.Values[1], Part->Position.Values[2]);
   }
 
+  if (WriteGameJson(&File.Document, "web/game.json") != 0) {
+    Fail("[Vcgs] Failed to write /web/game.json\n");
+    return -1;
+  }
+
   ServerStart();
 
   FreeDecodedFile(&File);
