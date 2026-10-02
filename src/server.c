@@ -31,6 +31,7 @@ int ServerStart(void) {
 
   uint8_t Buffer[4096];
 
+  bool IsFirstPacket = false;
   while (1) {
     struct sockaddr_in ClientAddress = {0};
     socklen_t ClientLength = sizeof(ClientAddress);
@@ -42,6 +43,22 @@ int ServerStart(void) {
     if (ReceivedLength < 0) {
       perror("recvfrom");
       break;
+    }
+
+    uint32_t PacketType = *(uint32_t *)Buffer;
+    if (PacketType == 0x06) {
+      const char *Token = (const char *)(Buffer + 12);
+
+      unsigned char Response[18] = {0x00};
+      Response[0] = 0x12;
+      sendto(Socket, Response, 18, 0, (struct sockaddr *)&ClientAddress,
+             ClientLength);
+      printf("[Vcgs] Client connected: %s\n",
+             inet_ntoa(ClientAddress.sin_addr));
+    } else if (PacketType == 0x00) {
+      if (IsFirstPacket) {
+        IsFirstPacket = true;
+      }
     }
   }
 
