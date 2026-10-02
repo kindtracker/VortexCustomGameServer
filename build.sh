@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-CCompiler="emcc"
-CFlags="-O3"
-LDFlags=""
+CCompiler="cc"
+CFlags="-O2"
+LDFlags="-lzstd"
 Include=""
 Out="build/vcgs"
 Jobs="$(nproc)"
@@ -16,15 +16,15 @@ CompileVcgs() {
   Object="build/vcgsb/$(echo "$File" | sed 's#/#_#g; s#\.c$#.o#')"
 
   echo "  CC  $File"
-  emcc $CFlags $Include -c "$File" \
+  $CCompiler $CFlags $Include -c "$File" \
     -o "$Object"
 }
 
 export -f CompileVcgs
-export CFlags
+export CCompiler CFlags Include
 
 find src -name "*.c" |
   xargs -P "$Jobs" -n 1 bash -c 'CompileVcgs "$1"' _
 
 echo "  LD  $Out"
-emcc $CFlags $LDFlags build/vcgsb/*.o -o "$Out"
+$CCompiler $CFlags $LDFlags build/vcgsb/*.o -o "$Out"
